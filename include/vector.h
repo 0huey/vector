@@ -25,6 +25,9 @@ enum VECTOR_STATUS
 // Allocates an array of element_size * a reasonable initial number of elements.
 int vector_init(vector* vec, size_t elememt_size);
 
+// Initializes a vector struct with the specified number of elements
+int vector_init_with_size(vector* vec, size_t element_size, size_t num_elements);
+
 // Adds an element to the end of the array, reallocating the array if it is full.
 // Warning: This may invalidate an array pointer you have saved.
 // After appending something to the array, you must recast array to a pointer of your type before accessing the data.

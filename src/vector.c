@@ -11,21 +11,26 @@
         fprintf(stderr, "calloc error with params: count=%lu, size=%lu\n", count, size);\
         return VECTOR_ALLOC_ERROR;}}
 
-size_t VECTOR_INIT_SIZE = 100;
+size_t VECTOR_DEFAULT_SIZE = 100;
 double VECTOR_RESIZE_FACTOR = 2.0;
 
 int vector_init(vector* vec, size_t element_size)
 {
-    if (!vec || !element_size)
+    return vector_init_with_size(vec, element_size, VECTOR_DEFAULT_SIZE);
+}
+
+int vector_init_with_size(vector* vec, size_t element_size, size_t num_elements)
+{
+    if (!vec || !element_size || !num_elements)
     {
         return VECTOR_INVALID_PARAM;
     }
 
-    vec->array = calloc(VECTOR_INIT_SIZE, element_size);
-    TEST_CALLOC(vec->array, "vector_init", VECTOR_INIT_SIZE, element_size);
+    vec->array = calloc(num_elements, element_size);
+    TEST_CALLOC(vec->array, "vector_init_with_size", num_elements, element_size);
 
     vec->size = 0;
-    vec->max_size = VECTOR_INIT_SIZE;
+    vec->max_size = num_elements;
     vec->element_size = element_size;
 
     return VECTOR_SUCCESS;
@@ -37,6 +42,8 @@ int vector_append(vector* vec, void* data)
     {
         return VECTOR_INVALID_PARAM;
     }
+
+    assert(vec->size <= vec->max_size);
 
     if (vec->size == vec->max_size)
     {
@@ -90,11 +97,9 @@ int vector_resize(vector* vec, size_t new_size)
         return VECTOR_SUCCESS;
     }
 
-    void* new_array = calloc(new_size, vec->element_size);
+    void* new_array = realloc(vec->array, vec->element_size * new_size);
     TEST_CALLOC(new_array, "vector_resize", new_size, vec->element_size);
 
-    memcpy(new_array, vec->array, vec->size * vec->element_size);
-    free(vec->array);
     vec->array = new_array;
     vec->max_size = new_size;
 

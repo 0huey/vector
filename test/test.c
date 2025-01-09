@@ -7,7 +7,7 @@
 #undef NDEBUG
 #endif
 
-const extern size_t VECTOR_INIT_SIZE;
+const extern size_t VECTOR_DEFAULT_SIZE;
 const extern double VECTOR_RESIZE_FACTOR;
 
 struct test_struct
@@ -28,7 +28,7 @@ void test_vector_remove(void);
 int main(void)
 {
     puts("[*] testing vector");
-    printf("[*] vector initial size: %lu; resize factor: %f\n", VECTOR_INIT_SIZE, VECTOR_RESIZE_FACTOR);
+    printf("[*] vector initial size: %lu; resize factor: %f\n", VECTOR_DEFAULT_SIZE, VECTOR_RESIZE_FACTOR);
 
     test_vector_init();
     test_vector_destroy();
@@ -59,9 +59,14 @@ void test_vector_init(void)
     assert(vec.array != NULL);
     assert(vec.size == 0);
     assert(vec.element_size == sizeof(size_t));
-    assert(vec.max_size == VECTOR_INIT_SIZE);
+    assert(vec.max_size == VECTOR_DEFAULT_SIZE);
 
     vector_destroy(&vec);
+
+    assert(vector_init_with_size(&vec, sizeof(int), VECTOR_DEFAULT_SIZE * 2) == VECTOR_SUCCESS);
+    assert(vec.max_size == VECTOR_DEFAULT_SIZE * 2);
+    vector_destroy(&vec);
+
     puts("[+] vector_init pass");
 }
 
@@ -83,7 +88,7 @@ void test_vector_append(void)
     vector vec;
     vector_init(&vec, sizeof(size_t));
 
-    size_t num_elements = VECTOR_INIT_SIZE * 10;
+    size_t num_elements = VECTOR_DEFAULT_SIZE * 10;
 
     for (size_t i = 0; i < num_elements; i++)
     {
@@ -127,13 +132,17 @@ void test_vector_resize(void)
         vector_append(&vec, &i);
     }
 
+    void* original_array = vec.array;
+
     assert(vector_resize(&vec, 1) == VECTOR_SUCCESS);
-    assert(vec.max_size == VECTOR_INIT_SIZE);
+    assert(vec.max_size == VECTOR_DEFAULT_SIZE);
+    assert(vec.array == original_array);
 
     assert(vector_resize(&vec, -1) == VECTOR_ALLOC_ERROR);
+    assert(vec.array == original_array);
 
-    assert(vector_resize(&vec, VECTOR_INIT_SIZE + 1) == VECTOR_SUCCESS);
-    assert(vec.max_size == VECTOR_INIT_SIZE + 1);
+    assert(vector_resize(&vec, VECTOR_DEFAULT_SIZE + 1) == VECTOR_SUCCESS);
+    assert(vec.max_size == VECTOR_DEFAULT_SIZE + 1);
 
     vector_destroy(&vec);
     puts("[+] vector_resize pass");
