@@ -7,8 +7,8 @@
 #undef NDEBUG
 #endif
 
-const extern size_t VECTOR_DEFAULT_SIZE;
-const extern double VECTOR_RESIZE_FACTOR;
+extern const size_t VECTOR_DEFAULT_SIZE;
+extern const double VECTOR_RESIZE_FACTOR;
 
 struct test_struct
 {
@@ -206,13 +206,13 @@ void test_vector_pop(void)
 void test_vector_remove(void)
 {
     vector vec;
-    vector_init(&vec, sizeof(int));
+    vector_init(&vec, sizeof(size_t));
 
     assert(vector_remove(&vec, 0) == VECTOR_INVALID_PARAM);
 
-    int num_elements = 10;
+    size_t num_elements = 10;
 
-    for (int i = 0; i < num_elements; i++)
+    for (size_t i = 0; i < num_elements; i++)
     {
         vector_append(&vec, &i);
     }
@@ -221,11 +221,11 @@ void test_vector_remove(void)
     assert(vector_remove(&vec, 0) == VECTOR_SUCCESS);
     assert(vec.size == num_elements - 1);
 
-    int* int_array = (int*)vec.array;
+    size_t* array = (size_t*)vec.array;
 
-    for (int i = 0; i < vec.size; i++)
+    for (size_t i = 0; i < vec.size; i++)
     {
-        assert(int_array[i] == i+1);
+        assert(array[i] == i+1);
     }
 
     assert(vector_remove(&vec, vec.size-1) == VECTOR_SUCCESS);

@@ -8,7 +8,7 @@
 #define TEST_CALLOC(addr, func, count, size) {\
     if(!addr) {\
         perror(func);\
-        fprintf(stderr, "calloc error with params: count=%lu, size=%lu\n", count, size);\
+        fprintf(stderr, "calloc error with params: count=%zu, size=%zu\n", count, size);\
         return VECTOR_ALLOC_ERROR;}}
 
 size_t VECTOR_DEFAULT_SIZE = 100;

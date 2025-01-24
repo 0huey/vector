@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -O2 -Wall -I include
+FLAGS = -O2 -Wall -Wextra -I include
 COMPILE = $(CC) $(FLAGS)
 SOURCES = $(wildcard src/*.c)
 BUILD_DIR = build
@@ -18,6 +18,6 @@ shared: build
 build:
 	mkdir build
 
-test: build
-	$(COMPILE) -g -o $(BUILD_TEST) $(wildcard test/*.c) $(SOURCES)
-	$(BUILD_TEST)
+test:
+	$(COMPILE) -fsanitize=address -g -o $(BUILD_TEST) $(wildcard test/*.c) $(SOURCES)
+	ASAN_OPTIONS=allocator_may_return_null=1 $(BUILD_TEST)
