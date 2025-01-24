@@ -53,5 +53,10 @@ int vector_copy(vector* dest, vector* src);
 // Copys the last element to out_data and removes it from the vector.
 int vector_pop(vector* vec, void* out_data);
 
-// Removes the element at index and shifts the remaining elements forward
+// Removes the element at index and shifts the remaining elements forward.
 int vector_remove(vector* vec, size_t index);
+
+// Removes the element at index by overwriting it with the last element.
+// Faster than shifting all the elements with vector_remove()
+// if you dont care about maintaining the order of the elements.
+int vector_remove_swapback(vector* vec, size_t index);

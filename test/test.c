@@ -24,6 +24,7 @@ void test_vector_resize(void);
 void test_vector_copy(void);
 void test_vector_pop(void);
 void test_vector_remove(void);
+void test_vector_remove_swapback(void);
 
 int main(void)
 {
@@ -38,6 +39,7 @@ int main(void)
     test_vector_copy();
     test_vector_pop();
     test_vector_remove();
+    test_vector_remove_swapback();
 
     puts("[*] all vector tests pass");
 
@@ -235,4 +237,43 @@ void test_vector_remove(void)
 
     vector_destroy(&vec);
     puts("[+] vector_remove pass");
+}
+
+void test_vector_remove_swapback(void)
+{
+    vector vec;
+    vector_init(&vec, sizeof(size_t));
+
+    const size_t num_elements = 10;
+
+    for (size_t i = 0; i < num_elements; i++)
+    {
+        vector_append(&vec, &i);
+    }
+
+    assert(vector_remove_swapback(&vec, num_elements) == VECTOR_INVALID_PARAM);
+
+    assert(vector_remove_swapback(&vec, num_elements - 1) == VECTOR_SUCCESS);
+    assert(vec.size == num_elements - 1);
+
+    size_t* array = vec.array;
+
+    for (size_t i = 0; i < num_elements - 1; i++)
+    {
+        // should not have swapped when removing the last element
+        assert(array[i] == i);
+    }
+
+    vector_remove_swapback(&vec, 0);
+
+    assert(vec.size == num_elements - 2);
+
+    assert(array[0] == num_elements - 2);
+
+    for (size_t i = 1; i < vec.size; i++)
+    {
+        assert(array[i] == i);
+    }
+
+    puts("[+] vector_remove_swapback pass");
 }

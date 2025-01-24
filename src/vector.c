@@ -156,3 +156,23 @@ int vector_remove(vector* vec, size_t index)
 
     return VECTOR_SUCCESS;
 }
+
+int vector_remove_swapback(vector* vec, size_t index)
+{
+    if (!vec || index >= vec->size)
+    {
+        return VECTOR_INVALID_PARAM;
+    }
+
+    if (index == vec->size - 1)
+    {
+        vec->size--;
+        return VECTOR_SUCCESS;
+    }
+
+    intptr_t dest = (intptr_t)vec->array + vec->element_size * index;
+    intptr_t src  = (intptr_t)vec->array + vec->element_size * --vec->size;
+    memcpy((void*)dest, (void*)src, vec->element_size);
+
+    return VECTOR_SUCCESS;
+}
